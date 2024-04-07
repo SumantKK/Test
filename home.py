@@ -84,7 +84,7 @@ def main():
                 Value_Estimate = int(round(prediction[0]))
                 st.write('Total Quantity (30 Kg Bags) :',Value_Estimate)
                 st.write('Total Weight :',30 * Value_Estimate)
-                st.write('That will cover an estimated area of :', int(round(Value_Estimate/7.5))
+                st.write('That will cover an estimated area of :', int(round(Value_Estimate/7.5)))
                 
                 
 
