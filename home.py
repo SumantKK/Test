@@ -21,7 +21,7 @@ def main():
 
     if feature_select == 'Shop Name':
         if 'Shop Name' in data.columns:
-            shop_name = st.sidebar.selectbox('Select Shop Name', data['Shop Name'].unique())
+            shop_name = st.sidebar.selectbox('Select Shop Name', options=data['Shop Name'].unique(), format_func=lambda x: x, index=0)
             filtered_data = data[data['Shop Name'] == shop_name]
             st.write(filtered_data)
         else:
@@ -29,7 +29,7 @@ def main():
 
     elif feature_select == 'Brand Name':
         if 'Brand' in data.columns:
-            brand_name = st.sidebar.selectbox('Select Brand', data['Brand'].unique())
+            brand_name = st.sidebar.selectbox('Select Brand', options=data['Brand'].unique(), format_func=lambda x: x, index=0)
             filtered_data = data[data['Brand'] == brand_name]
             st.write(filtered_data)
         else:
@@ -37,7 +37,7 @@ def main():
 
     elif feature_select == 'Pin Code':
         if 'Pin Code' in data.columns:
-            pin_code = st.sidebar.selectbox('Select Pin Code', data['Pin Code'].unique())
+            pin_code = st.sidebar.selectbox('Select Pin Code', options=data['Pin Code'].unique(), format_func=lambda x: x, index=0)
             filtered_data = data[data['Pin Code'] == pin_code]
             st.write(filtered_data)
         else:
@@ -46,20 +46,20 @@ def main():
     else:
         st.sidebar.write('Prediction Model')
         # Get connected dropdown options
-        shop_name = st.selectbox('Select Shop Name', data['Shop Name'].unique())
-        brand_name = st.selectbox('Select Brand', data[data['Shop Name'] == shop_name]['Brand'].unique())
+        shop_name = st.selectbox('Select Shop Name', options=data['Shop Name'].unique(), format_func=lambda x: x, index=0)
+        brand_name = st.selectbox('Select Brand', options=data[data['Shop Name'] == shop_name]['Brand'].unique(), format_func=lambda x: x, index=0)
         type_options = data[(data['Shop Name'] == shop_name) & (data['Brand'] == brand_name)]['Type'].unique()
         if len(type_options) > 0:
-            selected_type = st.selectbox('Select Type', type_options)
+            selected_type = st.selectbox('Select Type', options=type_options, format_func=lambda x: x, index=0)
         else:
             st.write('Type not available in the store.')
             return
         
         pin_code = data[(data['Shop Name'] == shop_name) & (data['Brand'] == brand_name)]['Pin Code'].iloc[0]
 
-        bags_20kg = st.selectbox('Quantity Available (Bags 20Kg)', [i for i in range(1, 101)])
-        bags_10kg = st.selectbox('Quantity Available (Bags 10Kg)', [i for i in range(1, 101)])
-        delivery_time = st.selectbox('Delivery Time (Days)', [i for i in range(1, 11)])
+        bags_20kg = st.selectbox('Quantity Required (Bags 20Kg)', options=[i for i in range(1, 101)], format_func=lambda x: str(x), index=0)
+        bags_10kg = st.selectbox('Quantity Required (Bags 10Kg)', options=[i for i in range(1, 101)], format_func=lambda x: str(x), index=0)
+        delivery_time = st.selectbox('Delivery Time (Days)', options=[i for i in range(1, 11)], format_func=lambda x: str(x), index=0)
         calculate_button = st.button('Calculate')
 
         prediction = None
@@ -82,11 +82,9 @@ def main():
             # Display prediction
             if prediction is not None:
                 Value_Estimate = int(round(prediction[0]))
-                st.write('Total Quantity (30 Kg Bags) :',Value_Estimate)
+                st.write('Total Quantity (30 Kg Multiples or Bags) :',Value_Estimate)
                 st.write('Total Weight :',30 * Value_Estimate)
                 st.write('Estimated Area of Sq Meters it will cover:', int(round(30 * Value_Estimate/7.5)))
-                
-                
 
 if __name__ == '__main__':
     main()
