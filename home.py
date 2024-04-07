@@ -1,8 +1,5 @@
 import streamlit as st
 import pandas as pd
-import xgboost as xgb
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
 # Load data from Excel file
 @st.cache_data  # Cache the data for better performance
@@ -11,10 +8,6 @@ def load_data(file_path):
 
 data = load_data("Survey.xlsx")
 
-# Function to filter data based on selected feature and value
-def filter_data(feature, value):
-    return data[data[feature] == value]
-
 # Main function to build the web app
 def main():
     st.title('Your Company Name')
@@ -22,56 +15,27 @@ def main():
 
     # Sidebar
     st.sidebar.title('Features')
-    feature_select = st.sidebar.selectbox('Select Feature', ['Brand Name', 'Division', 'Prediction Model'])
+    feature_select = st.sidebar.selectbox('Select Feature', ['Brand Name', 'Pin Code', 'Prediction Model'])
 
     if feature_select == 'Brand Name':
-        brand_name = st.sidebar.selectbox('Select Brand', data['Brand'].unique())
-        filtered_data = filter_data('Brand', brand_name)
+        if 'Brand' in data.columns:
+            brand_name = st.sidebar.selectbox('Select Brand', data['Brand'].unique())
+            filtered_data = data[data['Brand'] == brand_name]
+            st.write(filtered_data)
+        else:
+            st.sidebar.write("Brand data not found.")
 
-    elif feature_select == 'Division':
-        division = st.sidebar.selectbox('Select Division', data['Division'].unique())
-        filtered_data = filter_data('Division', division)
+    elif feature_select == 'Pin Code':
+        if 'Pin Code' in data.columns:
+            pin_code = st.sidebar.selectbox('Select Pin Code', data['Pin Code'].unique())
+            filtered_data = data[data['Pin Code'] == pin_code]
+            st.write(filtered_data)
+        else:
+            st.sidebar.write("Pin Code data not found.")
 
     else:
         st.sidebar.write('Prediction Model')
-        st.sidebar.write('Enter your input data:')
-        label_encoder = LabelEncoder()
-        brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
-        address = st.sidebar.selectbox('Address', data['Address'].unique())
-        pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
-        bags_20kg = st.sidebar.select_slider('Quantity Available (Bags 20Kg)', options=range(10, 101, 10))
-        bags_10kg = st.sidebar.select_slider('Quantity Available (Bags 10Kg)', options=range(10, 101, 10))
-        delivery_time = st.sidebar.number_input('Delivery Time (Days)', min_value=1, max_value=10, value=5)
-        calculate_button = st.sidebar.button('Calculate')
-
-        prediction = None
-
-        if calculate_button:
-            # Encode categorical features
-            data['Brand'] = label_encoder.fit_transform(data['Brand'])
-            data['Address'] = label_encoder.fit_transform(data['Address'])
-
-            # Predictions
-            X = data[['Brand', 'Address', 'Pin Code', 'Quantity Available (Bags 20Kg)',
-                      'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
-            y = data['Total Quantity (30 Kg Bags)']
-
-            # Train-test split
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train XGBoost model
-            model = xgb.XGBRegressor()
-            model.fit(X_train, y_train)
-
-            # Make prediction
-            prediction = model.predict([[brand, address, pin_code, bags_20kg, bags_10kg, delivery_time]])
-
-    # Display filtered data
-    st.write(filtered_data)
-
-    # Display prediction
-    if prediction is not None:
-        st.write('Available Quantity Totals (30 Kg Bags):', prediction[0])
+        # Add code for prediction model here
 
 if __name__ == '__main__':
     main()
