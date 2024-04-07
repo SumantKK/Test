@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 # Load data from Excel file
 @st.cache  # Cache the data for better performance
@@ -51,6 +52,10 @@ def main():
         bags_10kg = st.sidebar.select_slider('Quantity Available (Bags 10Kg)', options=range(1, 101), value=50)
         delivery_time = st.sidebar.select_slider('Delivery Time (Days)', options=range(1, 11), value=5)
 
+        # Convert categorical variables to numerical
+        label_encoder = LabelEncoder()
+        demand = label_encoder.fit_transform([demand])[0]
+
         # Predictions
         st.sidebar.write('Predictions:')
         if st.sidebar.button('Calculate'):
@@ -58,9 +63,15 @@ def main():
                       'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
             y = data['Total Quantity (30 Kg Bags)']
             
+            # Splitting data for training and testing
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+            # Convert categorical variables to numerical
+            X['Demand'] = label_encoder.fit_transform(X['Demand'])
+
             # Train XGBoost model
             model = xgb.XGBRegressor()
-            model.fit(X, y)
+            model.fit(X_train, y_train)
             
             # Make prediction
             prediction = model.predict([[brand, address, pin_code, demand, bags_20kg, bags_10kg, delivery_time]])
