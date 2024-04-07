@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 
 # Load data from Excel file
 @st.cache  # Cache the data for better performance
@@ -47,29 +46,26 @@ def main():
         brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
         address = st.sidebar.selectbox('Address', data['Address'].unique())
         pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
-        demand = st.sidebar.slider('Demand', min_value=0, max_value=100, step=1)
-        demand_category = convert_demand(demand)
-        bags_20kg = st.sidebar.number_input('Quantity Available (Bags 20Kg)')
-        bags_10kg = st.sidebar.number_input('Quantity Available (Bags 10Kg)')
-        delivery_time = st.sidebar.number_input('Delivery Time (Days)')
+        demand = st.sidebar.selectbox('Demand', ['High', 'Medium', 'Low'])
+        bags_20kg = st.sidebar.select_slider('Quantity Available (Bags 20Kg)', options=range(1, 101), value=50)
+        bags_10kg = st.sidebar.select_slider('Quantity Available (Bags 10Kg)', options=range(1, 101), value=50)
+        delivery_time = st.sidebar.select_slider('Delivery Time (Days)', options=range(1, 11), value=5)
 
         # Predictions
         st.sidebar.write('Predictions:')
-        X = data[['Brand', 'Address', 'Pin Code', 'Demand', 'Quantity Available (Bags 20Kg)',
-                  'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
-        y = data['Total Quantity (30 Kg Bags)']
-        
-        # Splitting data for training and testing
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-        # Train XGBoost model
-        model = xgb.XGBRegressor()
-        model.fit(X_train, y_train)
-        
-        # Make predictions
-        prediction = model.predict([[brand, address, pin_code, demand_category, bags_20kg, bags_10kg, delivery_time]])
-        
-        st.write('Available Quantity Totals (30 Kg Bags):', prediction[0])
+        if st.sidebar.button('Calculate'):
+            X = data[['Brand', 'Address', 'Pin Code', 'Demand', 'Quantity Available (Bags 20Kg)',
+                      'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
+            y = data['Total Quantity (30 Kg Bags)']
+            
+            # Train XGBoost model
+            model = xgb.XGBRegressor()
+            model.fit(X, y)
+            
+            # Make prediction
+            prediction = model.predict([[brand, address, pin_code, demand, bags_20kg, bags_10kg, delivery_time]])
+            
+            st.write('Available Quantity Totals (30 Kg Bags):', prediction[0])
 
     # Display filtered data
     st.write(filtered_data)
