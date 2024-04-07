@@ -81,7 +81,9 @@ def main():
 
             # Display prediction
             if prediction is not None:
-                st.write('Total Quantity (30 Kg Bags):', int(round(prediction[0])))
+                st.write('Total Quantity (30 Kg Bags) :', int(round(prediction[0])))
+                st.write('Total Weight :',30 * int(round(prediction[0])))
+                
 
 if __name__ == '__main__':
     main()
