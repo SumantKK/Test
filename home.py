@@ -28,7 +28,7 @@ def main():
     elif feature_select == 'Division':
         if 'Division' in data.columns:
             pin_code = st.sidebar.selectbox('Select Division', data['Division'].unique())
-            filtered_data = data[data['Pin Code'] == pin_code]
+            filtered_data = data[data['Division'] == pin_code]
             st.write(filtered_data)
         else:
             st.sidebar.write("Division data not found.")
