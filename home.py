@@ -45,12 +45,22 @@ def main():
 
     else:
         st.sidebar.write('Prediction Model')
-        st.sidebar.write('Enter input data:')
-        pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
-        bags_20kg = st.sidebar.selectbox('Quantity Available (Bags 20Kg)', [i for i in range(1, 101)])
-        bags_10kg = st.sidebar.selectbox('Quantity Available (Bags 10Kg)', [i for i in range(1, 101)])
-        delivery_time = st.sidebar.selectbox('Delivery Time (Days)', [i for i in range(1, 11)])
-        calculate_button = st.sidebar.button('Calculate')
+        # Get connected dropdown options
+        shop_name = st.selectbox('Select Shop Name', data['Shop Name'].unique())
+        brand_name = st.selectbox('Select Brand', data[data['Shop Name'] == shop_name]['Brand'].unique())
+        type_options = data[(data['Shop Name'] == shop_name) & (data['Brand'] == brand_name)]['Type'].unique()
+        if len(type_options) > 0:
+            selected_type = st.selectbox('Select Type', type_options)
+        else:
+            st.write('Type not available in the store.')
+            return
+        
+        pin_code = data[(data['Shop Name'] == shop_name) & (data['Brand'] == brand_name)]['Pin Code'].iloc[0]
+
+        bags_20kg = st.selectbox('Quantity Available (Bags 20Kg)', [i for i in range(1, 101)])
+        bags_10kg = st.selectbox('Quantity Available (Bags 10Kg)', [i for i in range(1, 101)])
+        delivery_time = st.selectbox('Delivery Time (Days)', [i for i in range(1, 11)])
+        calculate_button = st.button('Calculate')
 
         prediction = None
 
@@ -71,7 +81,7 @@ def main():
 
             # Display prediction
             if prediction is not None:
-                st.write('Total Quantity (30 Kg Bags):', prediction[0])
+                st.write('Total Quantity (30 Kg Bags):', int(round(prediction[0])))
 
 if __name__ == '__main__':
     main()
