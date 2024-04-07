@@ -6,8 +6,7 @@ import pandas as pd
 def load_data(file_path):
     return pd.read_excel(file_path)
 
-data = load_data("Survey.xlsx")
-print("Columns in DataFrame:", data.columns)  # Add this line to check columns
+data = load_data("your_excel_file.xlsx")
 
 # Function to filter data based on selected feature and value
 def filter_data(feature, value):
@@ -27,16 +26,15 @@ def main():
         filtered_data = filter_data('Brand', brand_name)
 
     elif feature_select == 'Division':
-        print("Columns in DataFrame:", data.columns)  # Add this line to check columns
         division = st.sidebar.selectbox('Select Division', data['Division'].unique())
         filtered_data = filter_data('Division', division)
 
     else:
         st.sidebar.write('Prediction Model')
         st.sidebar.write('Enter your input data:')
-        brand = st.sidebar.text_input('Brand')
-        address = st.sidebar.text_input('Address')
-        pin_code = st.sidebar.text_input('Pin Code')
+        brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
+        address = st.sidebar.selectbox('Address', data['Address'].unique())
+        pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
         demand = st.sidebar.number_input('Demand')
         bags_20kg = st.sidebar.number_input('Quantity Available (Bags 20Kg)')
         bags_10kg = st.sidebar.number_input('Quantity Available (Bags 10Kg)')
