@@ -33,6 +33,8 @@ def main():
     st.sidebar.title('Features')
     feature_select = st.sidebar.selectbox('Select Feature', ['Brand Name', 'Division', 'Prediction Model'])
 
+    filtered_data = data  # Initialize filtered_data with original data
+
     if feature_select == 'Brand Name':
         brand_name = st.sidebar.selectbox('Select Brand', data['Brand'].unique())
         filtered_data = filter_data('Brand', brand_name)
