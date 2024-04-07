@@ -7,6 +7,7 @@ def load_data(file_path):
     return pd.read_excel(file_path)
 
 data = load_data("Survey.xlsx")
+print("Columns in DataFrame:", data.columns)  # Add this line to check columns
 
 # Function to filter data based on selected feature and value
 def filter_data(feature, value):
@@ -26,6 +27,7 @@ def main():
         filtered_data = filter_data('Brand', brand_name)
 
     elif feature_select == 'Division':
+        print("Columns in DataFrame:", data.columns)  # Add this line to check columns
         division = st.sidebar.selectbox('Select Division', data['Division'].unique())
         filtered_data = filter_data('Division', division)
 
