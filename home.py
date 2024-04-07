@@ -37,9 +37,9 @@ def main():
         brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
         address = st.sidebar.selectbox('Address', data['Address'].unique())
         pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
-        bags_20kg = st.sidebar.slider('Quantity Available (Bags 20Kg)', 1, 100, 50)
-        bags_10kg = st.sidebar.slider('Quantity Available (Bags 10Kg)', 1, 100, 50)
-        delivery_time = st.sidebar.slider('Delivery Time (Days)', 1, 10, 5)
+        bags_20kg = st.sidebar.select_slider('Quantity Available (Bags 20Kg)', options=range(10, 101, 10))
+        bags_10kg = st.sidebar.select_slider('Quantity Available (Bags 10Kg)', options=range(10, 101, 10))
+        delivery_time = st.sidebar.number_input('Delivery Time (Days)', min_value=1, max_value=10, value=5)
         calculate_button = st.sidebar.button('Calculate')
 
         prediction = None
