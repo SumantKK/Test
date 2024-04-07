@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 # Load data from Excel file
 @st.cache_data  # Cache the data for better performance
@@ -34,6 +35,7 @@ def main():
     else:
         st.sidebar.write('Prediction Model')
         st.sidebar.write('Enter your input data:')
+        label_encoder = LabelEncoder()
         brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
         address = st.sidebar.selectbox('Address', data['Address'].unique())
         pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
@@ -45,6 +47,10 @@ def main():
         prediction = None
 
         if calculate_button:
+            # Encode categorical features
+            data['Brand'] = label_encoder.fit_transform(data['Brand'])
+            data['Address'] = label_encoder.fit_transform(data['Address'])
+
             # Predictions
             X = data[['Brand', 'Address', 'Pin Code', 'Quantity Available (Bags 20Kg)',
                       'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
