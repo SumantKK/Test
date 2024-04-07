@@ -15,7 +15,7 @@ def main():
 
     # Sidebar
     st.sidebar.title('Features')
-    feature_select = st.sidebar.selectbox('Select Feature', ['Brand Name', 'Pin Code', 'Prediction Model'])
+    feature_select = st.sidebar.selectbox('Select Feature', ['Brand Name', 'Pin Code', 'Division', 'Prediction Model'])
 
     if feature_select == 'Brand Name':
         if 'Brand' in data.columns:
@@ -32,6 +32,14 @@ def main():
             st.write(filtered_data)
         else:
             st.sidebar.write("Pin Code data not found.")
+
+    elif feature_select == 'Division':
+        if 'Division' in data.columns:
+            division = st.sidebar.selectbox('Select Division', data['Division'].unique())
+            filtered_data = data[data['Division'] == division]
+            st.write(filtered_data)
+        else:
+            st.sidebar.write("Division data not found.")
 
     else:
         st.sidebar.write('Prediction Model')
