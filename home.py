@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 def load_data(file_path):
     return pd.read_excel(file_path)
 
-data = load_data("Survey.xlsx")
+data = load_data("your_excel_file.xlsx")
 
 # Function to filter data based on selected feature and value
 def filter_data(feature, value):
@@ -38,7 +38,7 @@ def main():
         brand = st.sidebar.selectbox('Brand', data['Brand'].unique())
         address = st.sidebar.selectbox('Address', data['Address'].unique())
         pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
-        demand = st.sidebar.selectbox('Demand', ['High', 'Medium', 'Low'])
+        demand = st.sidebar.selectbox('Demand', ['Low', 'Medium', 'High'])
         bags_20kg = st.sidebar.slider('Quantity Available (Bags 20Kg)', 1, 100, 50)
         bags_10kg = st.sidebar.slider('Quantity Available (Bags 10Kg)', 1, 100, 50)
         delivery_time = st.sidebar.slider('Delivery Time (Days)', 1, 10, 5)
@@ -46,14 +46,10 @@ def main():
 
         prediction = None
 
-        # Convert categorical variables to numerical
-        label_encoder = LabelEncoder()
-
-        # Convert 'Demand' column to categorical type
-        demand = pd.Categorical(demand, categories=['High', 'Medium', 'Low'], ordered=True)
-        demand = label_encoder.fit_transform(demand)
-
         if calculate_button:
+            # Convert 'Demand' column to numerical
+            demand_mapping = {'Low': 1, 'Medium': 2, 'High': 3}
+
             # Predictions
             X = data[['Brand', 'Address', 'Pin Code', 'Demand', 'Quantity Available (Bags 20Kg)',
                       'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
@@ -62,12 +58,15 @@ def main():
             # Train-test split
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+            # Convert 'Demand' column to numerical
+            X['Demand'] = X['Demand'].map(demand_mapping)
+
             # Train XGBoost model
             model = xgb.XGBRegressor()
             model.fit(X_train, y_train)
 
             # Make prediction
-            prediction = model.predict([[brand, address, pin_code, demand, bags_20kg, bags_10kg, delivery_time]])
+            prediction = model.predict([[brand, address, pin_code, demand_mapping[demand], bags_20kg, bags_10kg, delivery_time]])
 
     # Display filtered data
     st.write(filtered_data)
