@@ -42,6 +42,9 @@ def main():
         bags_20kg = st.sidebar.slider('Quantity Available (Bags 20Kg)', 1, 100, 50)
         bags_10kg = st.sidebar.slider('Quantity Available (Bags 10Kg)', 1, 100, 50)
         delivery_time = st.sidebar.slider('Delivery Time (Days)', 1, 10, 5)
+        calculate_button = st.sidebar.button('Calculate')
+
+        prediction = None
 
         # Convert categorical variables to numerical
         label_encoder = LabelEncoder()
@@ -50,9 +53,8 @@ def main():
         demand = pd.Categorical(demand, categories=['High', 'Medium', 'Low'], ordered=True)
         demand = label_encoder.fit_transform(demand)
 
-        # Predictions
-        st.sidebar.write('Predictions:')
-        if st.sidebar.button('Calculate'):
+        if calculate_button:
+            # Predictions
             X = data[['Brand', 'Address', 'Pin Code', 'Demand', 'Quantity Available (Bags 20Kg)',
                       'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
             y = data['Total Quantity (30 Kg Bags)']
@@ -67,10 +69,12 @@ def main():
             # Make prediction
             prediction = model.predict([[brand, address, pin_code, demand, bags_20kg, bags_10kg, delivery_time]])
 
-            st.write('Available Quantity Totals (30 Kg Bags):', prediction[0])
-
     # Display filtered data
     st.write(filtered_data)
+
+    # Display prediction
+    if prediction is not None:
+        st.write('Available Quantity Totals (30 Kg Bags):', prediction[0])
 
 if __name__ == '__main__':
     main()
