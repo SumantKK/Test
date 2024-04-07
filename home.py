@@ -17,7 +17,7 @@ def main():
 
     # Sidebar
     st.sidebar.title('Features')
-    feature_select = st.sidebar.selectbox('Select Feature', ['Shop Name', 'Brand Name', 'Address', 'Prediction Model'])
+    feature_select = st.sidebar.selectbox('Select Feature', ['Shop Name', 'Brand Name', 'Pin Code', 'Prediction Model'])
 
     if feature_select == 'Shop Name':
         if 'Shop Name' in data.columns:
@@ -35,18 +35,18 @@ def main():
         else:
             st.sidebar.write("Brand data not found.")
 
-    elif feature_select == 'Address':
-        if 'Address' in data.columns:
-            address = st.sidebar.selectbox('Select Address', data['Address'].unique())
-            filtered_data = data[data['Address'] == address]
+    elif feature_select == 'Pin Code':
+        if 'Pin Code' in data.columns:
+            pin_code = st.sidebar.selectbox('Select Pin Code', data['Pin Code'].unique())
+            filtered_data = data[data['Pin Code'] == pin_code]
             st.write(filtered_data)
         else:
-            st.sidebar.write("Address data not found.")
+            st.sidebar.write("Pin Code data not found.")
 
     else:
         st.sidebar.write('Prediction Model')
         st.sidebar.write('Enter input data:')
-        address = st.sidebar.selectbox('Address', data['Address'].unique())
+        pin_code = st.sidebar.selectbox('Pin Code', data['Pin Code'].unique())
         bags_20kg = st.sidebar.selectbox('Quantity Available (Bags 20Kg)', [i for i in range(1, 101)])
         bags_10kg = st.sidebar.selectbox('Quantity Available (Bags 10Kg)', [i for i in range(1, 101)])
         delivery_time = st.sidebar.selectbox('Delivery Time (Days)', [i for i in range(1, 11)])
@@ -56,7 +56,7 @@ def main():
 
         if calculate_button:
             # Define X and y for prediction
-            X = data[['Address', 'Quantity Available (Bags 20Kg)', 'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
+            X = data[['Pin Code', 'Quantity Available (Bags 20Kg)', 'Quantity Available (Bags 10Kg)', 'Delivery Time (Days)']]
             y = data['Total Quantity (30 Kg Bags)']
 
             # Train-test split
@@ -67,7 +67,7 @@ def main():
             model.fit(X_train, y_train)
 
             # Make prediction
-            prediction = model.predict([[address, bags_20kg, bags_10kg, delivery_time]])
+            prediction = model.predict([[pin_code, bags_20kg, bags_10kg, delivery_time]])
 
             # Display prediction
             if prediction is not None:
