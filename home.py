@@ -6,7 +6,7 @@ import pandas as pd
 def load_data(file_path):
     return pd.read_excel(file_path)
 
-data = load_data("your_excel_file.xlsx")
+data = load_data("survey.xlsx")
 
 # Function to filter data based on selected feature and value
 def filter_data(feature, value):
